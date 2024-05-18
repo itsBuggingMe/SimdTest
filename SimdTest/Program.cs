@@ -17,7 +17,9 @@ namespace SimdTest
 
             var sum = BenchmarkRunner.Run<SimdBenchmark>();
 
-            foreach(var methodInfo in typeof(SimdBenchmark).GetMethods().Where(m => m.GetCustomAttribute<BenchmarkAttribute>() != null))
+            RunTest("Control", s => m.NaiveSimple());
+
+            foreach (var methodInfo in typeof(SimdBenchmark).GetMethods().Where(m => m.GetCustomAttribute<BenchmarkAttribute>() != null))
             {
                 RunTest(methodInfo.ToString(), s => methodInfo.Invoke(s, null));
             }
