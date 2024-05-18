@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using CommandLine;
 using SimpleSimd;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -114,9 +113,9 @@ namespace SimdTest
             ref var leftPtr = ref MemoryMarshal.GetReference<float>(left);
             ref var rightPtr = ref MemoryMarshal.GetReference<float>(right);
             ref var outPtr = ref MemoryMarshal.GetReference<float>(output);
-            int len = right.Length >> 3;
+            int len = right.Length;
 
-            for (int i = 0; i < len; i += Vector256<float>.Count * 4)
+            for (int i = 0; i < len; i += Vector256<float>.Count)
             {
                 ref var l = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
                 ref var r = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
