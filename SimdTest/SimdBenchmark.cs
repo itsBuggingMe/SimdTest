@@ -1,7 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
+using CommandLine;
 using SimpleSimd;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 namespace SimdTest
 {
@@ -106,6 +109,23 @@ namespace SimdTest
         }
 
         [Benchmark]
+        public void SimdRef()
+        {
+            ref var leftPtr = ref MemoryMarshal.GetReference<float>(left);
+            ref var rightPtr = ref MemoryMarshal.GetReference<float>(right);
+            ref var outPtr = ref MemoryMarshal.GetReference<float>(output);
+            int len = right.Length >> 3;
+
+            for (int i = 0; i < len; i += Vector256<float>.Count * 4)
+            {
+                ref var l = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
+                ref var r = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
+                ref var o = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i));
+                o = r * l;
+            }
+        }
+
+        [Benchmark]
         public unsafe void SimdPtrInc()
         {
             fixed(float* lp = left, rp = right, op = output)
@@ -113,8 +133,8 @@ namespace SimdTest
                 Vector<float>* l = (Vector<float>*)lp;
                 Vector<float>* r = (Vector<float>*)rp;
                 Vector<float>* o = (Vector<float>*)op;
-                int len = right.Length;
-                int i = 0;
+                nint len = right.Length;
+                nint i = 0;
 
                 while(i < len)
                 {
@@ -136,8 +156,8 @@ namespace SimdTest
                 Vector<float>* l = (Vector<float>*)lp;
                 Vector<float>* r = (Vector<float>*)rp;
                 Vector<float>* o = (Vector<float>*)op;
-                int len = right.Length;
-                int i = 0;
+                nint len = right.Length;
+                nint i = 0;
 
                 while (i < len)
                 {
@@ -162,8 +182,8 @@ namespace SimdTest
                 Vector<float>* l = (Vector<float>*)lp;
                 Vector<float>* r = (Vector<float>*)rp;
                 Vector<float>* o = (Vector<float>*)op;
-                int len = right.Length >> 3;
-                int i = 0;
+                nint len = right.Length >> 3;
+                nint i = 0;
 
                 while (i < len)
                 {

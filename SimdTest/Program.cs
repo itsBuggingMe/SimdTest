@@ -16,6 +16,7 @@ namespace SimdTest
                 m.Validate(() => methodInfo.Invoke(m, null));
             
             var sum = BenchmarkRunner.Run<SimdBenchmark>();
+            Console.ReadLine();
         }
     }
 }
