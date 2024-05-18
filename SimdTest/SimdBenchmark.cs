@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SimpleSimd;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -228,7 +227,24 @@ namespace SimdTest
             [FieldOffset(0)]
             public Vector<nint> Vector;
 
-            public static Vector<nint> IncrementVector = new Vector<nint>(sizeof(Vector<float>)).WithElement(0, Vector<float>.Count);
+            public static Vector<nint> IncrementVector = new Vector<nint>(new nint[] { 
+                Vector<float>.Count, 
+                sizeof(Vector<float>), 
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+                sizeof(Vector<float>),
+            });
 
             internal unsafe ref struct InlinePtr
             {
@@ -237,14 +253,6 @@ namespace SimdTest
                 public Vector<float>* Right;
                 public Vector<float>* Output;
             }
-        }
-        #endregion
-
-        #region Lib
-        [Benchmark]
-        public unsafe void Lib()
-        {
-            SimdOps.Multiply(left.AsSpan(), right.AsSpan(), output.AsSpan());
         }
         #endregion
 
