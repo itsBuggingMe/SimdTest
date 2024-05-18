@@ -114,12 +114,44 @@ namespace SimdTest
             ref var outPtr = ref MemoryMarshal.GetReference<float>(output);
             int len = right.Length;
 
-            for (int i = 0; i < len; i += Vector256<float>.Count)
+            for (int i = 0; i < len; i += Vector256<float>.Count * 4)
             {
-                ref var l = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
-                ref var r = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
-                ref var o = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i));
-                o = r * l;
+                ref Vector<float> l1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
+                ref Vector<float> r1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
+                ref Vector<float> o1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i));
+                o1 = r1 * l1;
+            }
+        }
+
+        [Benchmark]
+        public void SimdRefUnroll()
+        {
+            ref var leftPtr = ref MemoryMarshal.GetReference<float>(left);
+            ref var rightPtr = ref MemoryMarshal.GetReference<float>(right);
+            ref var outPtr = ref MemoryMarshal.GetReference<float>(output);
+            int len = right.Length;
+
+            for (int i = 0; i < len; i += Vector256<float>.Count * 4)
+            {
+                ref Vector<float> l1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
+                ref Vector<float> r1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
+                ref Vector<float> o1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i));
+
+                ref Vector<float> l2 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i + Vector<float>.Count));
+                ref Vector<float> r2 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i + Vector<float>.Count));
+                ref Vector<float> o2 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i + Vector<float>.Count));
+
+                ref Vector<float> l3 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i + 2 * Vector<float>.Count));
+                ref Vector<float> r3 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i + 2 * Vector<float>.Count));
+                ref Vector<float> o3 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i + 2 * Vector<float>.Count));
+
+                ref Vector<float> l4 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i + 3 * Vector<float>.Count));
+                ref Vector<float> r4 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i + 3 * Vector<float>.Count));
+                ref Vector<float> o4 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref outPtr, i + 3 * Vector<float>.Count));
+                o1 = r1 * l1;
+                o2 = r2 * l2;
+                o3 = r3 * l3;
+                o4 = r4 * l4;
             }
         }
 
