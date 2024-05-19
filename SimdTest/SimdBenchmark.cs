@@ -114,7 +114,7 @@ namespace SimdTest
             ref var outPtr = ref MemoryMarshal.GetReference<float>(output);
             int len = right.Length;
 
-            for (int i = 0; i < len; i += Vector256<float>.Count * 4)
+            for (int i = 0; i < len; i += Vector256<float>.Count)
             {
                 ref Vector<float> l1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref leftPtr, i));
                 ref Vector<float> r1 = ref Unsafe.As<float, Vector<float>>(ref Unsafe.Add(ref rightPtr, i));
